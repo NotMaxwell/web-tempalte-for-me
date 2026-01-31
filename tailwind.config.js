@@ -3,6 +3,8 @@ module.exports = {
   content: [
     // Scan all HTML templates
     "./web/templates/**/*.html",
+    // Scan TypeScript source files
+    "./web/ts/**/*.ts",
     // Scan Go files for class strings (if any)
     "./internal/**/*.go",
   ],
