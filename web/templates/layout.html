@@ -1,10 +1,10 @@
-{{define "layout"}}
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{if .Data.Title}}{{.Data.Title}} | {{end}}Your App</title>
+    <title>{{if .Title}}{{.Title}} | {{end}}Your App</title>
     
     <!-- Tailwind CSS (compiled) -->
     <link rel="stylesheet" href="/static/css/site.css">
@@ -39,7 +39,7 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{template .Content .Data}}
+        {{block "content" .}}{{end}}
     </main>
 
     <!-- Footer -->
@@ -56,3 +56,16 @@
 </body>
 </html>
 {{end}}
+
+{{/* 
+    HOW TO USE THIS LAYOUT:
+    
+    Each page template should:
+    1. Define "content" block with the page content
+    
+    Example page template:
+    {{define "content"}}
+    <h1>{{.Title}}</h1>
+    <p>Your page content here</p>
+    {{end}}
+*/}}
