@@ -353,6 +353,79 @@ CGO_ENABLED=0 go build -o bin/server ./cmd/web
 | `PORT` | Server port | `8080` |
 | `DATABASE_URL` | PostgreSQL connection string | - |
 
+## 🚢 Render Deployment
+
+Deploy to [Render](https://render.com) in minutes.
+
+### Option 1: Infrastructure as Code (`render.yaml`)
+
+Render can automatically create your web service and PostgreSQL database from the included `render.yaml`:
+
+1. Push your repo to GitHub
+2. Connect repo in Render dashboard
+3. Render automatically detects and uses `render.yaml`
+4. Database and app are created with proper environment links
+5. Deployments trigger on push to `main`
+
+### Option 2: Manual Setup
+
+1. **Create a new Web Service** on Render
+   - GitHub repo: connect your repo
+   - Environment: Go
+   - Build Command: `bash build.sh`
+   - Start Command: `./bin/server`
+   - Plan: Free or paid tier
+
+2. **Add environment variables:**
+   - `PORT` = `8080` (or leave unset; Render assigns automatically)
+   - `DATABASE_URL` = (leave blank; Render will inject if you add a DB)
+
+3. **Add PostgreSQL (optional)**
+   - Create a new PostgreSQL database on Render
+   - Render auto-injects `DATABASE_URL` into your web service
+   - Migrations run automatically via Procfile's `release` command
+
+### Build & Run Commands
+
+**Build** (`build.sh`):
+```bash
+npm install --ci          # Install Node dependencies
+npm run css:build         # Build Tailwind CSS
+npm run ts:build          # Build TypeScript
+go build -o bin/server ./cmd/web  # Build Go binary
+```
+
+**Run** (Procfile):
+```bash
+./bin/server  # Start the server (PORT env var auto-set by Render)
+```
+
+**Release** (Procfile):
+```bash
+psql $DATABASE_URL -f migrations/0001_init.sql  # Run migrations
+```
+
+### Local Testing Before Deployment
+
+Test the build and run commands locally:
+
+```bash
+# Simulate Render build
+bash build.sh
+
+# Simulate Render web start (with DATABASE_URL)
+DATABASE_URL="postgres://user:pass@localhost:5432/testdb" PORT=8080 ./bin/server
+```
+
+### Troubleshooting Render Deployment
+
+| Issue | Solution |
+|-------|----------|
+| Build fails | Check `build.sh` logs in Render dashboard; ensure `npm`, Go are available |
+| Migrations fail | Ensure `DATABASE_URL` is set; check migrations syntax |
+| App won't start | Check `PORT` env var; verify `bin/server` was built |
+| Assets missing | Verify `npm run css:build` and `npm run ts:build` run in build script |
+
 ### Docker (Optional)
 
 Create a `Dockerfile`:
